@@ -25,7 +25,7 @@ def cut_cmd(word):
 @client.event
 async def on_ready():
     print('username: {0.user}'.format(client))
-    await client.change_presence(activity=discord.Game('!help'))
+    await client.change_presence(activity=discord.Game('жизнь'))
 
 @client.event
 async def on_message(message):
