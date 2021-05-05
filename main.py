@@ -4,6 +4,7 @@ from dialogflow_request import request
 import gamedata as gd
 
 userdata = FoobarDB('./userdata.db')
+userlist = open('userlist.list', 'a+')
 
 token_f = open('token.token', 'r')
 token = token_f.read()
@@ -33,13 +34,18 @@ async def on_message(message):
         return
 
     user_id = str(message.author.id)
-    user_id_s = str(message.author.id) + '_was-shown'
+    user_id_s = user_id + '_was-shown'
+    user_id_attempts = user_id + '_attempts'
+    user_id_nickname = user_id + '_nickname'
 
     msg = cut_notif(message.content)
 
     if userdata.get(user_id) == False:
         userdata.set(user_id, 'start')
         userdata.set(user_id_s, False)
+        userdata.set(user_id_attempts, 1)
+        userdata.set(user_id_nickname, message.author.display_name)
+        userlist.write(user_id + '\n')
 
 
     if msg.startswith('!игнат'):
