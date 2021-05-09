@@ -1,5 +1,6 @@
 from discord import Embed
-
+userdata = None
+user_id = 0
 embed_send_list = []
 selection_list = []
 send_list = []
@@ -19,8 +20,6 @@ def write(word):
 
 def print_msg(word):
     send_list.append(word)
-
-
 
 class GameData():
 
@@ -48,6 +47,8 @@ class GameData():
         if choice == None:
             write('Я подскакиваю, и, поддергивая спадающие штаны пижамы, бегу к лестнице, ведущей на чердак.')
             write('На чердачной двери висит замок, кодом от которого является число Пи. Но что это за число?')
+            write('Моя голова еще не проснулась, поэтому я всегда могу спросить ответ на вопрос у Игната - моего умного помощника.')
+            print_msg('Подсказка: хороший совет можно получить от игната, введя команду !игнат <текст вопроса>. Например: "!игнат чему равен синус".')
             selection('3.14', '0.42', '1.25')
         if choice == 1:
             write('Введенный код оказался верным, и замок со скрипом открылся.')
@@ -105,8 +106,11 @@ class GameData():
 
     def experiment(self, choice):
         global next_func
-        write('Включив фен, решаю, что неплохо было бы смыть пыль со своих великолепных волос. Фен случайно выскальзывает из рук, я закономерно получаю удар током и падаю в обморок.')
-        next_func = 'game_over'
+        if choice == None:
+            write('Включив фен, решаю, что неплохо было бы смыть пыль со своих великолепных волос. Фен случайно выскальзывает из рук, я закономерно получаю удар током и падаю в обморок.')
+            selection()
+        else:
+            next_func = 'game_over'
 
     def find_a_hydrometer(self, choice):
         global next_func
@@ -207,6 +211,7 @@ class GameData():
         if choice == None:
             write('С интересом развинчиваю технику, краем глаза замечая, что забыл отключить колонку от сети. Бабах!!! Что-то ярко сверкнуло и бумкнуло. Кажется, это конец. Медленно оседаю в обморок.')
             print_msg('Попробуйте снова.')
+            userdata.set(str(user_id) + '_attempts', userdata.get(str(user_id) + '_attempts') + 1)
             selection()
         next_func = 'start'
 
@@ -303,6 +308,7 @@ class GameData():
         if choice == None:
             write('(Я очнулся, когда наступили сумерки. Где-то раздавались встревоженные голоса родителей, которые не могли меня найти, а у меня перед глазами стояло суровое лицо Ираиды Захаровны, которая поджав губы произнесла: "Хана тебе, Бубочкин! И двойка в четверти")')
             print_msg('Попробуйте снова.')
+            userdata.set(str(user_id) + '_attempts', userdata.get(str(user_id) + '_attempts') + 1)
             selection()
         else:
             next_func = 'start'
@@ -340,4 +346,5 @@ class GameData():
             write('Конец!')
             selection()
         else:
-            next_func = None
+            print_msg('Чтобы начать сначала, введите !start')
+            next_func = 'end'

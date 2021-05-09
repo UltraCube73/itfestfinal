@@ -4,7 +4,6 @@ from dialogflow_request import request
 import gamedata as gd
 
 userdata = FoobarDB('./userdata.db')
-userlist = open('userlist.list', 'a+')
 
 token_f = open('token.token', 'r')
 token = token_f.read()
@@ -45,68 +44,84 @@ async def on_message(message):
         userdata.set(user_id_s, False)
         userdata.set(user_id_attempts, 1)
         userdata.set(user_id_nickname, message.author.display_name)
-        userlist.write(user_id + '\n')
+        with open('userlist.list', 'a') as userlist:
+            userlist.write(user_id + '\n')
 
+    if msg.startswith('!help'):
+        embed = discord.Embed(title='Основные команды')
+        embed.add_field(name='!start', value='Сброс прогресса игры и возврат в начало')
+        embed.add_field(name='!игнат <сообщение>', value='Обращение к умному ассистенту')
+        embed.add_field(name='!help', value='Просмотр списка команд')
+        await message.channel.send(embed=embed)
 
-    if msg.startswith('!игнат'):
+    elif msg.startswith('!игнат'):
         await message.channel.send('`{}`'.format(request(user_id, cut_cmd(msg))))
 
+    elif msg.startswith('!start'):
+        userdata.set(user_id, 'start')
+        await message.channel.send('Прогресс был сброшен!')
+
     else:
-        game = gd.GameData()
-        func = getattr(game, userdata.get(user_id))
-        wasShown = userdata.get(user_id_s)
+        if userdata.get(user_id) == None:
+            await message.channel.send('Чтобы начать сначала, введите команду !start')
+        else:
+            gd.userdata = userdata
+            gd.user_id = message.author.id
+            game = gd.GameData()
+            func = getattr(game, userdata.get(user_id))
+            wasShown = userdata.get(user_id_s)
 
-        if wasShown and gd.selection_list == []:
-            wasShown = False
+            if wasShown and gd.selection_list == []:
+                wasShown = False
 
-        if wasShown:
-            try:
-                if gd.selection_list != ['next']:
-                    choice = int(msg)
-                else:
-                    choice = 0
-                if 1 <= choice <= len(gd.selection_list) or gd.selection_list == ['next']:
-                    gd.embed_send_list, gd.send_list = [], []
-                    func(choice)
-                    for i in gd.embed_send_list:
-                        await message.channel.send(embed=i)
-                    for i in gd.send_list:
-                        await message.channel.send(i)
-                    userdata.set(user_id, gd.next_func)
-                    userdata.set(user_id_s, False)
-
-                    func = getattr(game, gd.next_func)
-                    gd.embed_send_list, gd.send_list, gd.selection_list = [], [], []
-                    func(None)
-                    for i in gd.embed_send_list:
-                        await message.channel.send(embed=i)
+            if wasShown:
+                try:
                     if gd.selection_list != ['next']:
-                        for i in gd.selection_list:
-                            await message.channel.send(i)
+                        choice = int(msg)
                     else:
-                        await message.channel.send('Отправьте любое сообщение, чтобы продолжить.')
-                    for i in gd.send_list:
+                        choice = 0
+                    if 1 <= choice <= len(gd.selection_list) or gd.selection_list == ['next']:
+                        gd.embed_send_list, gd.send_list = [], []
+                        func(choice)
+                        for i in gd.embed_send_list:
+                            await message.channel.send(embed=i)
+                        for i in gd.send_list:
+                            await message.channel.send(i)
+                        userdata.set(user_id, gd.next_func)
+                        userdata.set(user_id_s, False)
+
+                        func = getattr(game, gd.next_func)
+                        gd.embed_send_list, gd.send_list, gd.selection_list = [], [], []
+                        func(None)
+                        for i in gd.embed_send_list:
+                            await message.channel.send(embed=i)
+                        if gd.selection_list != ['next']:
+                            for i in gd.selection_list:
+                                await message.channel.send(i)
+                        else:
+                            await message.channel.send('Отправьте любое сообщение, чтобы продолжить.')
+                        for i in gd.send_list:
+                            await message.channel.send(i)
+
+                        userdata.set(user_id_s, True)
+                    else:
+                        await message.channel.send('Ввод должен являться числом от 1 до {}!'.format(len(gd.selection_list)))
+                except Exception as e:
+                    await message.channel.send('Ввод должен являться целым числом!')
+
+            if not wasShown:
+                func(None)
+
+                for i in gd.embed_send_list:
+                    await message.channel.send(embed=i)
+                if gd.selection_list != ['next']:
+                    for i in gd.selection_list:
                         await message.channel.send(i)
-
-                    userdata.set(user_id_s, True)
                 else:
-                    await message.channel.send('Ввод должен являться числом от 1 до {}!'.format(len(gd.selection_list)))
-            except Exception as e:
-                await message.channel.send('Ввод должен являться целым числом!')
-
-        if not wasShown:
-            func(None)
-
-            for i in gd.embed_send_list:
-                await message.channel.send(embed=i)
-            if gd.selection_list != ['next']:
-                for i in gd.selection_list:
+                    await message.channel.send('Отправьте любое сообщение, чтобы продолжить.')
+                for i in gd.send_list:
                     await message.channel.send(i)
-            else:
-                await message.channel.send('Отправьте любое сообщение, чтобы продолжить.')
-            for i in gd.send_list:
-                await message.channel.send(i)
 
-            userdata.set(user_id_s, True)
+                userdata.set(user_id_s, True)
 
 client.run(token)

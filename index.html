@@ -1,21 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Рейтинг игроков</title>
+    <style type="text/css">
+	html{{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}}body{{margin:0}}article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{{display:block}}audio,canvas,progress,video{{display:inline-block;vertical-align:baseline}}audio:not([controls]){{display:none;height:0}}[hidden],template{{display:none}}a{{background:transparent}}a:active,a:hover{{outline:0}}abbr[title]{{border-bottom:1px dotted}}b,strong{{font-weight:700}}dfn{{font-style:italic}}h1{{font-size:2em;margin:.67em 0}}mark{{background:#ff0;color:#000}}small{{font-size:80%}}sub,sup{{font-size:75%;line-height:0;position:relative;vertical-align:baseline}}sup{{top:-.5em}}sub{{bottom:-.25em}}img{{border:0}}svg:not(:root){{overflow:hidden}}figure{{margin:1em 40px}}hr{{-moz-box-sizing:content-box;box-sizing:content-box;height:0}}pre{{overflow:auto}}code,kbd,pre,samp{{font-family:monospace,monospace;font-size:1em}}button,input,optgroup,select,textarea{{color:inherit;font:inherit;margin:0}}button{{overflow:visible}}button,select{{text-transform:none}}button,html input[type="button"],input[type="reset"],input[type="submit"]{{-webkit-appearance:button;cursor:pointer}}button[disabled],html input[disabled]{{cursor:default}}button::-moz-focus-inner,input::-moz-focus-inner{{border:0;padding:0}}input{{line-height:normal}}input[type="checkbox"],input[type="radio"]{{box-sizing:border-box;padding:0}}input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{{height:auto}}input[type="search"]{{-webkit-appearance:textfield;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box}}input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{{-webkit-appearance:none}}fieldset{{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}}legend{{border:0;padding:0}}textarea{{overflow:auto}}optgroup{{font-weight:700}}table{{border-collapse:collapse;border-spacing:0}}td,th{{padding:0}}
+	body{{
+		margin: 0;
+		padding: 0;
+		text-align: left;
+	}}
+	</style>
 </head>
-<body>
-<h1><em><strong>Рейтинг игроков</strong></em></h1>
-<table style="border-collapse: collapse; width: 100%; height: 90px;" border="1">
+<body style="background-color:#4e525f;">
+<h1 align="center" style="color: white;"><strong>Рейтинг игроков</strong></h1>
+<table style="border-collapse: collapse; width: 100%; height: 90px;" border="1" class="table">
 <tbody>
 <tr style="height: 18px;">
-<td style="width: 12.5%; height: 18px;"><strong>Место</strong></td>
-<td style="width: 37.5%; height: 18px;"><strong>Игроки</strong></td>
+<td style="width: 5.5%; height: 18px;"><strong>Место</strong></td>
+<td style="width: 59.5%; height: 18px;"><strong>Игроки</strong></td>
 <td style="width: 29.5455%; height: 18px;"><strong>Этап прохождения</strong></td>
-<td style="width: 20.4545%; height: 18px;"><strong>Попытки</strong></td>
+<td style="width: 5.4545%; height: 18px;"><strong>Попытки</strong></td>
 </tr>
 {}
 </tbody>
 </table>
+<style type="text/css">
+.table{{
+	border: 1px solid #eee;
+	table-layout: fixed;
+	width: 100%;
+	margin-bottom: 20px;
+}}
+.table th {{
+	font-weight: bold;
+	padding: 5px;
+	background: #efefef;
+	border: 1px solid #dddddd;
+}}
+.table td{{
+	padding: 5px 10px;
+	border: 1px solid #eee;
+	text-align: left;
+}}
+.table tbody tr:nth-child(odd){{
+	background: #fff;
+}}
+.table tbody tr:nth-child(even){{
+	background: #F7F7F7;
+}}
+html{{
+margin: 50px;
+}}
+</style>
 </body>
 </html>
