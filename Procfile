@@ -1,1 +1,2 @@
-worker: python ratings.py
+worker: python main.py
+web: gunicorn ratings.py:ratings.py
