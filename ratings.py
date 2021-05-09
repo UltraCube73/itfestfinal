@@ -47,4 +47,5 @@ def index():
     del userdata
     table = '\n'.join(rowlist)
     return index_page.format(table)
-app.run()
+if __name__ == '__main__':
+    app.run()
