@@ -9,6 +9,7 @@ token_f = open('token.token', 'r')
 token = token_f.read()
 
 client = discord.Client()
+client.channels_messages_create(140252024666062848, "No Websockets required!")
 
 def cut_notif(word):
     word = word.split()
