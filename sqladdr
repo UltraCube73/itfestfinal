@@ -1,1 +1,1 @@
-postgres://xgmbuvieapjawm:a687ed70e43570d1015ab12ae0069af0e3dbec88f352805c5f74cdf23f1968fa@ec2-18-214-195-34.compute-1.amazonaws.com:5432/dc2iqqe3db8trg
+postgresql://xgmbuvieapjawm:a687ed70e43570d1015ab12ae0069af0e3dbec88f352805c5f74cdf23f1968fa@ec2-18-214-195-34.compute-1.amazonaws.com:5432/dc2iqqe3db8trg
