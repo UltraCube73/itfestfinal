@@ -8,7 +8,7 @@ db = SQLAlchemy(app)
 class User(db.Model):
     user_id = db.Column(db.BigInteger, primary_key=True)
     username = db.Column(db.String(40), unique=False, nullable=False)
-    user_func = db.Column(db.String(20), unique=True, nullable=True)
+    user_func = db.Column(db.String(20), unique=False, nullable=True)
     user_was_shown = db.Column(db.Boolean, default=False, nullable=False)
     user_attempts = db.Column(db.Integer)
 
