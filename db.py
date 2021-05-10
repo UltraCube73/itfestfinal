@@ -5,7 +5,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = addr_file.read()
 db = SQLAlchemy(app)
 
 class User(db.Model):
-    user_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.BigInteger, primary_key=True)
     username = db.Column(db.String(40), unique=False, nullable=False)
     user_func = db.Column(db.String(20), unique=True, nullable=True)
     user_was_shown = db.Column(db.Boolean, default=False, nullable=False)

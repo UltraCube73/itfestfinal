@@ -35,6 +35,7 @@ async def on_message(message):
         user = User.query.filter_by(user_id=message.author.id).first()
         user.user_id
     except Exception as e:
+        print(1)
         db.create_all()
         new_user = User(user_id=message.author.id, user_func='start', username=message.author.display_name, user_was_shown=False, user_attempts=1)
         db.session.add(new_user)
