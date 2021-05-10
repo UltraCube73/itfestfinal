@@ -1,6 +1,5 @@
 from discord import Embed
-userdata = None
-user_id = 0
+
 embed_send_list = []
 selection_list = []
 send_list = []
@@ -211,7 +210,6 @@ class GameData():
         if choice == None:
             write('С интересом развинчиваю технику, краем глаза замечая, что забыл отключить колонку от сети. Бабах!!! Что-то ярко сверкнуло и бумкнуло. Кажется, это конец. Медленно оседаю в обморок.')
             print_msg('Попробуйте снова.')
-            userdata.set(str(user_id) + '_attempts', userdata.get(str(user_id) + '_attempts') + 1)
             selection()
         next_func = 'start'
 
@@ -308,7 +306,6 @@ class GameData():
         if choice == None:
             write('(Я очнулся, когда наступили сумерки. Где-то раздавались встревоженные голоса родителей, которые не могли меня найти, а у меня перед глазами стояло суровое лицо Ираиды Захаровны, которая поджав губы произнесла: "Хана тебе, Бубочкин! И двойка в четверти")')
             print_msg('Попробуйте снова.')
-            userdata.set(str(user_id) + '_attempts', userdata.get(str(user_id) + '_attempts') + 1)
             selection()
         else:
             next_func = 'start'

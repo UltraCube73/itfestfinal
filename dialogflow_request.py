@@ -2,7 +2,7 @@ from google.cloud import dialogflow
 import os
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'credentials.json'
-project_id_f = open('project_id.id', 'r')
+project_id_f = open('project_id', 'r')
 project_id = project_id_f.read()
 
 language_code = 'ru'

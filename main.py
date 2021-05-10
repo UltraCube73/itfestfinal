@@ -1,11 +1,9 @@
 import discord
-from foobardb import FoobarDB
+from db import db, User
 from dialogflow_request import request
 import gamedata as gd
 
-userdata = FoobarDB('./userdata.db')
-
-token_f = open('token.token', 'r')
+token_f = open('token', 'r')
 token = token_f.read()
 
 client = discord.Client()
@@ -32,20 +30,16 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    user_id = str(message.author.id)
-    user_id_s = user_id + '_was-shown'
-    user_id_attempts = user_id + '_attempts'
-    user_id_nickname = user_id + '_nickname'
-
     msg = cut_notif(message.content)
-
-    if userdata.get(user_id) == False:
-        userdata.set(user_id, 'start')
-        userdata.set(user_id_s, False)
-        userdata.set(user_id_attempts, 1)
-        userdata.set(user_id_nickname, message.author.display_name)
-        with open('userlist.list', 'a') as userlist:
-            userlist.write(user_id + '\n')
+    try:
+        user = User.query.filter_by(user_id=message.author.id).first()
+        user.user_id
+    except Exception as e:
+        db.create_all()
+        new_user = User(user_id=message.author.id, user_func='start', username=message.author.display_name, user_was_shown=False, user_attempts=1)
+        db.session.add(new_user)
+        db.session.commit()
+        user = User.query.filter_by(user_id=message.author.id).first()
 
     if msg.startswith('!help'):
         embed = discord.Embed(title='Основные команды')
@@ -55,73 +49,72 @@ async def on_message(message):
         await message.channel.send(embed=embed)
 
     elif msg.startswith('!игнат'):
-        await message.channel.send('`{}`'.format(request(user_id, cut_cmd(msg))))
+        await message.channel.send('`{}`'.format(request(message.author.id, cut_cmd(msg))))
 
     elif msg.startswith('!start'):
-        userdata.set(user_id, 'start')
+        user.user_func = 'start'
+        db.session.commit()
         await message.channel.send('Прогресс был сброшен!')
 
     else:
-        if userdata.get(user_id) == None:
-            await message.channel.send('Чтобы начать сначала, введите команду !start')
-        else:
-            gd.userdata = userdata
-            gd.user_id = message.author.id
-            game = gd.GameData()
-            func = getattr(game, userdata.get(user_id))
-            wasShown = userdata.get(user_id_s)
+        game = gd.GameData()
+        func = getattr(game, user.user_func)
+        wasShown = user.user_was_shown
 
-            if wasShown and gd.selection_list == []:
-                wasShown = False
+        if wasShown and gd.selection_list == []:
+            wasShown = False
 
-            if wasShown:
-                try:
-                    if gd.selection_list != ['next']:
-                        choice = int(msg)
-                    else:
-                        choice = 0
-                    if 1 <= choice <= len(gd.selection_list) or gd.selection_list == ['next']:
-                        gd.embed_send_list, gd.send_list = [], []
-                        func(choice)
-                        for i in gd.embed_send_list:
-                            await message.channel.send(embed=i)
-                        for i in gd.send_list:
-                            await message.channel.send(i)
-                        userdata.set(user_id, gd.next_func)
-                        userdata.set(user_id_s, False)
-
-                        func = getattr(game, gd.next_func)
-                        gd.embed_send_list, gd.send_list, gd.selection_list = [], [], []
-                        func(None)
-                        for i in gd.embed_send_list:
-                            await message.channel.send(embed=i)
-                        if gd.selection_list != ['next']:
-                            for i in gd.selection_list:
-                                await message.channel.send(i)
-                        else:
-                            await message.channel.send('Отправьте любое сообщение, чтобы продолжить.')
-                        for i in gd.send_list:
-                            await message.channel.send(i)
-
-                        userdata.set(user_id_s, True)
-                    else:
-                        await message.channel.send('Ввод должен являться числом от 1 до {}!'.format(len(gd.selection_list)))
-                except Exception as e:
-                    await message.channel.send('Ввод должен являться целым числом!')
-
-            if not wasShown:
-                func(None)
-
-                for i in gd.embed_send_list:
-                    await message.channel.send(embed=i)
+        if wasShown:
+            try:
                 if gd.selection_list != ['next']:
-                    for i in gd.selection_list:
-                        await message.channel.send(i)
+                    choice = int(msg)
                 else:
-                    await message.channel.send('Отправьте любое сообщение, чтобы продолжить.')
-                for i in gd.send_list:
-                    await message.channel.send(i)
+                    choice = 0
+                if 1 <= choice <= len(gd.selection_list) or gd.selection_list == ['next']:
+                    gd.embed_send_list, gd.send_list = [], []
+                    func(choice)
+                    for i in gd.embed_send_list:
+                        await message.channel.send(embed=i)
+                    for i in gd.send_list:
+                        await message.channel.send(i)
+                    user.user_func = gd.next_func
+                    user.user_was_shown = False
+                    db.session.commit()
 
-                userdata.set(user_id_s, True)
+                    func = getattr(game, gd.next_func)
+                    gd.embed_send_list, gd.send_list, gd.selection_list = [], [], []
+                    func(None)
+                    for i in gd.embed_send_list:
+                        await message.channel.send(embed=i)
+                    if gd.selection_list != ['next']:
+                        for i in gd.selection_list:
+                            await message.channel.send(i)
+                    else:
+                        await message.channel.send('Отправьте любое сообщение, чтобы продолжить.')
+                    for i in gd.send_list:
+                        await message.channel.send(i)
+
+                    user.user_was_shown = True
+                    db.session.commit()
+                else:
+                    await message.channel.send('Ввод должен являться числом от 1 до {}!'.format(len(gd.selection_list)))
+            except Exception as e:
+                await message.channel.send('Ввод должен являться целым числом!')
+
+        if not wasShown:
+            func(None)
+
+            for i in gd.embed_send_list:
+                await message.channel.send(embed=i)
+            if gd.selection_list != ['next']:
+                for i in gd.selection_list:
+                    await message.channel.send(i)
+            else:
+                await message.channel.send('Отправьте любое сообщение, чтобы продолжить.')
+            for i in gd.send_list:
+                await message.channel.send(i)
+
+            user.user_was_shown = True
+            db.session.commit()
 
 client.run(token)

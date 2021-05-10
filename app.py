@@ -1,8 +1,7 @@
-from flask import Flask, redirect, url_for
-from foobardb import FoobarDB
+from flask import redirect, url_for
+from db import db, User
 import function_table as ft
-
-app = Flask(__name__)
+from application import app
 
 index_f = open('index.html', 'r')
 index_page = index_f.read()
@@ -13,7 +12,7 @@ row = '''<tr style="height: 18px;">
 <td style="width: 20.4545%; height: 18px;">&nbsp;{}</td>
 </tr>'''
 
-
+db.init_app(app)
 
 @app.errorhandler(404)
 def not_found(error):
@@ -25,25 +24,20 @@ def redirect_index():
 
 @app.route('/index')
 def index():
-    userdata = FoobarDB('./userdata.db')
-    f = open('userlist.list', 'r')
-    idlist = f.read().split('\n')
-    del idlist[-1]
-    f.close()
-    del f
+    db.create_all()
+    users = User.query.all()
     userlist = []
     rowlist = []
-    for id in idlist:
+    for userdata in users:
         user = dict()
-        user['nickname'] = userdata.get(id + '_nickname')
-        user['func'] = ft.function_table[userdata.get(id)]
-        user['attempts'] = userdata.get(id + '_attempts')
-        user['score'] = ft.score_table[userdata.get(id)] - user['attempts']
+        user['nickname'] = userdata.username
+        user['func'] = ft.function_table[userdata.user_func]
+        user['attempts'] = userdata.user_attempts
+        user['score'] = ft.score_table[userdata.user_func] - user['attempts']
         userlist.append(user)
     userlist = sorted(userlist, key=lambda user: user['score'], reverse=True)
     for i in range(len(userlist)):
         user = userlist[i]
         rowlist.append(row.format(i+1, user['nickname'], user['func'], user['attempts']))
-    del userdata
     table = '\n'.join(rowlist)
     return index_page.format(table)
