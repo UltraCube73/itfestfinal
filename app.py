@@ -24,7 +24,6 @@ def redirect_index():
 
 @app.route('/index')
 def index():
-    db.create_all()
     users = User.query.all()
     userlist = []
     rowlist = []
