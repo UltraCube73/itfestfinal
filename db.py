@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from application import app
 addr_file = open('sqladdr', 'r')
 app.config['SQLALCHEMY_DATABASE_URI'] = addr_file.read()
+app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
 db = SQLAlchemy(app)
 
 class User(db.Model):
