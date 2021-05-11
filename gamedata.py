@@ -231,6 +231,10 @@ class FunctionList():
 
     def game_over2(self, choice):
         if choice == None:
+            from db import db, User
+            user = User.query.filter_by(user_id=UserObject.id).first()
+            user.user_attempts = user.user_attempts + 1
+            db.session.commit()
             write('С интересом развинчиваю технику, краем глаза замечая, что забыл отключить колонку от сети. Бабах!!! Что-то ярко сверкнуло и бумкнуло. Кажется, это конец. Медленно оседаю в обморок.')
             print_msg('Кажется, в этот раз не повезло. Попробуйте снова.')
             selection()
@@ -317,6 +321,10 @@ class FunctionList():
 
     def game_over(self, choice):
         if choice == None:
+            from db import db, User
+            user = User.query.filter_by(user_id=UserObject.id).first()
+            user.user_attempts = user.user_attempts + 1
+            db.session.commit()
             write('(Я очнулся, когда наступили сумерки. Где-то раздавались встревоженные голоса родителей, которые не могли меня найти, а у меня перед глазами стояло суровое лицо Ираиды Захаровны, которая поджав губы произнесла: "Хана тебе, Бубочкин! И двойка в четверти")')
             print_msg('Попробуйте снова.')
             selection()
@@ -351,17 +359,15 @@ class FunctionList():
         if choice == None:
             write('Конец!')
             selection()
+            print_msg('Внимание! При вводе следующего сообщения прогресс будет сброшен.')
         else:
-            print_msg('Чтобы начать сначала, введите !start')
-            UserObject.next_func = 'end'
+            UserObject.next_func = 'start'
 
 class UserObject():
     embed_send_list = []
     selection_list = []
     send_list = []
-
+    id = 0
     next_func = None
 
-    def set_next_func(self, func_name):
-        next_func = func_name
     GameData = FunctionList

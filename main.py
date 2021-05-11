@@ -45,7 +45,6 @@ async def on_message(message):
 
     if msg.startswith('!help'):
         embed = discord.Embed(title='Основные команды')
-        embed.add_field(name='!start', value='Сброс прогресса игры и возврат в начало')
         embed.add_field(name='!игнат <сообщение>', value='Обращение к умному ассистенту')
         embed.add_field(name='!help', value='Просмотр списка команд')
         await message.channel.send(embed=embed)
@@ -56,16 +55,8 @@ async def on_message(message):
         await message.channel.send('`{}`'.format(response))
         print('Response: {}\n---\n'.format(response))
 
-    elif msg.startswith('!start'):
-        print('\n---\nProgress drop\nUser: {}\n---\n'.format(message.author.id))
-        user.user_func = 'start'
-        user.user_was_shown = False
-        db.session.commit()
-        try:
-            del gdlist[str(message.author.id)]
-        except Exception:
-            pass
-        await message.channel.send('Прогресс был сброшен!')
+    elif msg.startswith('!'):
+        await message.channel.send('Неизвестная команда!')
 
     else:
         try:
@@ -74,7 +65,7 @@ async def on_message(message):
             print('\n---\nNew user connected: {}\n---\n'.format(str(message.author.id)))
             gdlist[str(message.author.id)] = gd.UserObject
             game = gdlist[str(message.author.id)]
-
+        game.id = message.author.id
         func = getattr(game.GameData(), user.user_func)
 
         wasShown = user.user_was_shown
@@ -126,7 +117,6 @@ async def on_message(message):
                 else:
                     await message.channel.send('Ввод должен являться числом от 1 до {}!'.format(len(game.selection_list)))
             except Exception as e:
-                print(e)
                 await message.channel.send('Ввод должен являться целым числом!')
 
         if not wasShown:
